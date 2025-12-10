@@ -20,14 +20,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
+        // build participants list (show empty state if none)
+        const participantsHtml =
+          details.participants && details.participants.length
+            ? details.participants
+                .map((participant) => {
+                  const initials = (participant || "")
+                    .split(" ")
+                    .map(s => s[0] || "")
+                    .join("")
+                    .slice(0,2)
+                    .toUpperCase();
+                  return `<li class="participant-item"><span class="avatar" aria-hidden="true">${initials}</span><span class="name">${participant}</span></li>`;
+                })
+                .join("")
+            : `<li class="empty">No participants yet</li>`;
+
         activityCard.innerHTML = `
           <h4>${name}</h4>
           <p>${details.description}</p>
           <p><strong>Schedule:</strong> ${details.schedule}</p>
           <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          <p><strong>Participants:</strong></p>
-          <ul>
-            ${details.participants.map(participant => `<li>${participant}</li>`).join('')}
+          <p class="participants-title"><strong>Participants:</strong></p>
+          <ul class="participant-list" aria-label="Participants for ${name}">
+            ${participantsHtml}
           </ul>
         `;
 
